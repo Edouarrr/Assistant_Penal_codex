@@ -24,7 +24,14 @@ def main() -> None:
     # Formulaire d'entrée principal
     with st.form("input_form", clear_on_submit=False):
         user_text = st.text_area("Votre question", key="user_text", height=100)
-        st.form_submit_button("Envoyer", on_click=submit_text)
+        submitted = st.form_submit_button("Envoyer", on_click=submit_text)
+        
+        # Gestion alternative de la soumission (compatibilité avec version 1)
+        if submitted and "user_text" in st.session_state:
+            # Cette condition permet de gérer le cas où on_click n'est pas supporté
+            if not st.session_state.get("submitted_text"):
+                st.session_state["submitted_text"] = st.session_state["user_text"]
+                st.toast("AI response ready", icon="✅")
     
     # Script JavaScript pour les raccourcis clavier
     st.components.v1.html(
@@ -97,7 +104,11 @@ def main() -> None:
     # Affichage du PDF dans la sidebar si disponible
     pdf_file = Path("sample.pdf")
     if pdf_file.exists():
-        pdf_html = f'<iframe src="{pdf_file.as_posix()}#page=1" width="350" height="600"></iframe>'
+        # Format multi-lignes pour une meilleure lisibilité (style version 1)
+        pdf_html = (
+            f'<iframe src="{pdf_file.as_posix()}#page=1" '
+            'width="350" height="600"></iframe>'
+        )
         st.sidebar.components.v1.html(pdf_html, height=600)
     
     # Message de notification

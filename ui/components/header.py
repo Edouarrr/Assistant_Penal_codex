@@ -3,20 +3,42 @@ from pathlib import Path
 import streamlit as st
 
 
-def render_header(use_columns: bool = True) -> str:
+def render_header(use_columns: bool = True, style: str = "default") -> str:
     """Render the app header with logo and firm name and return HTML.
     
     Args:
         use_columns: Si True, utilise st.columns pour la mise en page (par défaut).
                     Si False, génère tout en HTML pur.
+        style: Style du header ("default", "flexbox", ou "compact")
     
     Returns:
         str: Le code HTML du header généré.
     """
     logo_path = Path("static/logo-steru.svg")
     
-    if use_columns:
-        # Approche avec colonnes Streamlit (Version 1)
+    if style == "flexbox":
+        # Style de la version 1 avec proportions flex
+        if logo_path.exists():
+            logo_html = f"<img src='{logo_path.as_posix()}' style='width:100%'>"
+        else:
+            logo_html = ":grey_question:"
+        
+        html = (
+            "<header>"
+            "<div style='display:flex;align-items:center'>"
+            f"<div style='flex:1'>{logo_html}</div>"
+            "<div style='flex:8'>"
+            "<h1 style='margin-bottom:0'>Cabinet Steru</h1>"
+            "<hr>"
+            "</div>"
+            "</div>"
+            "</header>"
+        )
+        st.markdown(html, unsafe_allow_html=True)
+        return html
+    
+    elif use_columns:
+        # Approche avec colonnes Streamlit
         cols = st.columns([1, 8])
         html_parts = ["<header style='display:flex;align-items:center'>"]
         
@@ -40,7 +62,7 @@ def render_header(use_columns: bool = True) -> str:
         html = "\n".join(html_parts)
         
     else:
-        # Approche HTML pure (Version 2)
+        # Approche HTML pure
         html_parts = ["<header style='display:flex;align-items:center'>"]
         
         if logo_path.exists():
@@ -75,3 +97,8 @@ def render_header_simple() -> None:
         st.markdown("<h1 style='margin-bottom:0'>Cabinet Steru</h1>", unsafe_allow_html=True)
         
     st.markdown("---")
+
+
+def render_header_legacy() -> str:
+    """Version legacy du header (compatible avec version 1)."""
+    return render_header(use_columns=False, style="flexbox")

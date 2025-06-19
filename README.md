@@ -29,12 +29,25 @@ Assistant Penal Codex is an experimental workflow for digitizing legal documents
 
 ## Environment variables
 
+Set the following variables in your environment or in Railway's configuration panel.
+
+### OpenAI
+
 - `OPENAI_API_KEY` – token for OpenAI embeddings and LLMs
+
+### SharePoint
+
+- `MS_TENANT_ID` – Microsoft Azure tenant ID
+- `MS_CLIENT_ID` – application client ID
+- `MS_CLIENT_SECRET` – client secret associated with the app
+- `SHAREPOINT_SITE_ID` – identifier of the SharePoint site
+- `SHAREPOINT_DOC_LIB` – document library or drive ID
+
+Other useful variables:
+
 - `CHROMADB_URL` – location of the ChromaDB instance
 - `RAILWAY_TOKEN` – deployment token for Railway
 - `PORT` – web service port if running as an API
-
-These variables should be set in your environment or in Railway's configuration panel.
 
 
 ## OCR SharePoint synchronization
@@ -53,4 +66,59 @@ On Railway you can schedule this with a cron job:
   schedule: "0 2 * * *"
   command: "python -m core.ocr_sharepoint_sync"
 ```
+
+## Running the pipeline
+
+The following steps show how to process documents from OCR to vector embeddings.
+
+1. **Synchronize SharePoint and run OCR**
+
+   ```bash
+   python -m core.ocr_sharepoint_sync
+   ```
+
+   New or updated files are saved under `raw_documents/` and OCR text is written
+   to `ocr_output/`.
+
+2. **Generate summaries**
+
+   Use the `PieceSynthesizer` class to create JSON summaries for each text file
+   in `ocr_output/`:
+
+   ```python
+   from pathlib import Path
+   from core.piece_synthesizer import PieceSynthesizer
+
+   synth = PieceSynthesizer()
+   for txt_file in Path("ocr_output").rglob("*.txt"):
+       text = txt_file.read_text(encoding="utf-8")
+       summary = synth.create_summary(
+           text,
+           metadata={},
+           parties_citees=[],
+           faits_essentiels="",
+           incoherences_detectees="",
+           sourcing={"fichier_source": txt_file.name},
+       )
+       synth.save_summary(summary, txt_file.name)
+   ```
+
+3. **Build an entity map**
+
+   ```python
+   from core.memory_warming import load_all_summaries, build_entity_map, save_entity_map
+
+   summaries = load_all_summaries("summaries")
+   entity_map = build_entity_map(summaries)
+   save_entity_map(entity_map, dossier="dossier1")
+   ```
+
+4. **Vectorize PDFs**
+
+   ```bash
+   python -m core.vector_juridique
+   ```
+
+   This reads PDFs from `ocr_output/`, stores embeddings in ChromaDB and writes
+   page summaries to `summaries/`.
 
