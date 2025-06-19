@@ -1,0 +1,6 @@
+infraction_delays:
+  crime: 20
+  delit: 6
+  contravention: 3
+recidive_multiplier: 2
+near_threshold_days: 30
