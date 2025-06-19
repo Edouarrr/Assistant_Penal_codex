@@ -1,0 +1,6 @@
+ocr:
+  languages: ["fr", "en"]
+  rotate: true
+  auto_split: true
+  extract_tables: true
+  log_path: "/logs/ocr_errors.log"

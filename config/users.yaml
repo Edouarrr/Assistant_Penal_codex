@@ -1,0 +1,97 @@
+# Configuration des utilisateurs - Assistant Pénal STERU BARATTE
+# IMPORTANT: Changez les mots de passe par défaut avant la mise en production !
+
+credentials:
+  usernames:
+    # Administrateur système
+    admin:
+      name: "Administrateur"
+      password: "kpY8sf97Rt1"
+      role: "admin"
+      email: "edouard.steru@steru-baratte.com"
+      permissions:
+        - full_access
+        - user_management
+        - system_config
+        - audit_logs
+    
+    # Edouard Steru
+    esteru:
+      name: "Edouard Steru"
+      password: "kpY8sf97Rt"  
+      role: "avocat_associe"
+      email: "edouard.steru@steru-baratte.com"
+      permissions:
+        - document_access
+        - ai_queries
+        - document_generation
+        - sharepoint_sync
+        - export_data
+    
+    # Exemple d'autres utilisateurs (à adapter)
+    collaborateur1:
+      name: "Aude Baratte"
+      password: "fzeiufhJJG"  
+      role: "Collaborateur"
+      email: "aude.baratte@steru-baratte.com"
+      permissions:
+        - document_access
+        - ai_queries
+        - document_generation
+    
+    stagiaire1:
+      name: "Stagiaire Test"
+      password: "fzeiufhJJG"  # À CHANGER
+      role: "stagiaire"
+      email: "stage1@steru-baratte.com"
+      permissions:
+        - document_access
+        - ai_queries_limited
+
+# Configuration des rôles
+roles:
+  admin:
+    description: "Administrateur système avec accès complet"
+    max_queries_per_day: -1  # Illimité
+    can_export: true
+    can_delete: true
+    can_manage_users: true
+  
+  avocat_associe:
+    description: "Avocat associé du cabinet"
+    max_queries_per_day: -1  # Illimité
+    can_export: true
+    can_delete: true
+    can_manage_users: false
+  
+  collaborateur:
+    description: "Collaborateur du cabinet"
+    max_queries_per_day: 500
+    can_export: true
+    can_delete: false
+    can_manage_users: false
+  
+  stagiaire:
+    description: "Stagiaire avec accès limité"
+    max_queries_per_day: 50
+    can_export: false
+    can_delete: false
+    can_manage_users: false
+
+# Paramètres de sécurité
+security:
+  password_min_length: 8
+  password_require_special: true
+  password_require_numbers: true
+  password_require_uppercase: true
+  session_timeout_minutes: 480  # 8 heures
+  max_login_attempts: 5
+  lockout_duration_minutes: 30
+  
+# Paramètres d'audit
+audit:
+  log_login_attempts: true
+  log_document_access: true
+  log_ai_queries: true
+  log_exports: true
+  retention_days: 365

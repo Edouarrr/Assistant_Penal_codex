@@ -1,0 +1,47 @@
+# Interface
+streamlit
+flask
+
+# LLM & embeddings
+openai
+anthropic
+mistralai
+tiktoken  # facultatif si Rust installé
+
+# Traitement des documents
+PyMuPDF
+python-docx
+pypdf
+pdf2image
+pandas
+numpy
+
+# OCR
+easyocr
+pytesseract
+Pillow
+
+# Analyse et graphes
+networkx
+matplotlib
+plotly
+
+# SharePoint + Azure + Google Vision
+msal
+requests
+google-api-python-client
+google-auth
+google-cloud-vision
+
+# Vectorisation & RAG
+chromadb
+langchain
+
+# Utilitaires
+python-dotenv
+PyYAML
+tqdm
+PyMuPDF
+chromadb
+protobuf==3.20.3
+

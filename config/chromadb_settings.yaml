@@ -1,0 +1,42 @@
+chromadb:
+  # Configuration ChromaDB
+  persist_directory: "chroma_db/"
+  collection_name: "legal_documents"
+  
+  # Paramètres de chunking
+  chunk_size: 1000
+  chunk_overlap: 200
+  
+  # Métadonnées à stocker
+  metadata_fields:
+    - file_name
+    - file_path
+    - page_number
+    - document_type
+    - author
+    - creation_date
+    - modification_date
+    - summary_lvl1
+    - summary_lvl2
+    - source_sharepoint
+    - ocr_date
+    - vector_model
+    
+  # Configuration des embeddings
+  embedding:
+    model: "text-embedding-ada-002"
+    batch_size: 100
+    max_retries: 3
+    
+  # Paramètres de recherche
+  search:
+    default_k: 10
+    score_threshold: 0.7
+    rerank: true
+    
+  # Maintenance
+  maintenance:
+    auto_cleanup: true
+    max_age_days: 365
+    backup_enabled: true
+    backup_directory: "backups/chromadb/"
