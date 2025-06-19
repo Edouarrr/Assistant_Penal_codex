@@ -1,0 +1,18 @@
+{
+  "volumes": [
+    {
+      "mountPath": "/data",
+      "name": "data"
+    }
+  ],
+  "envars": [
+    {
+      "key": "OPENAI_API_KEY",
+      "value": ""
+    },
+    {
+      "key": "CHROMADB_DIR",
+      "value": "/data/chroma"
+    }
+  ]
+}

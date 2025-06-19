@@ -1,0 +1,6 @@
+streamlit
+pydantic
+chromadb
+openai
+pytesseract
+pillow
