@@ -32,3 +32,20 @@ Assistant Penal Codex is an experimental workflow for digitizing legal documents
 
 These variables should be set in your environment or in Railway's configuration panel.
 
+
+## OCR SharePoint synchronization
+
+To sync the OCR output with SharePoint, run:
+
+```bash
+python -m core.ocr_sharepoint_sync
+```
+
+On Railway you can schedule this with a cron job:
+
+```yaml
+- name: "Synchronisation SharePoint + OCR"
+  schedule: "0 2 * * *"
+  command: "python -m core.ocr_sharepoint_sync"
+```
+
