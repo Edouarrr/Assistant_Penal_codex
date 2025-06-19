@@ -12,6 +12,9 @@ def main() -> None:
     st.markdown(styles.INTER_FONTS_CSS, unsafe_allow_html=True)
     render_header()
     
+    # Titre principal
+    st.title("Assistant Codex")
+    
     # Initialisation de l'état de session
     if "submitted_text" not in st.session_state:
         st.session_state["submitted_text"] = ""
@@ -21,14 +24,21 @@ def main() -> None:
         st.session_state["submitted_text"] = st.session_state.get("user_text", "")
         st.toast("AI response ready", icon="✅")
     
+    def clear_text() -> None:
+        """Callback pour effacer le texte."""
+        st.session_state["user_text"] = ""
+    
     # Formulaire d'entrée principal
     with st.form("input_form", clear_on_submit=False):
         user_text = st.text_area("Votre question", key="user_text", height=100)
-        submitted = st.form_submit_button("Envoyer", on_click=submit_text)
+        col1, col2 = st.columns([1, 5])
+        with col1:
+            submitted = st.form_submit_button("Envoyer", on_click=submit_text)
+        with col2:
+            st.form_submit_button("Effacer", on_click=clear_text)
         
-        # Gestion alternative de la soumission (compatibilité avec version 1)
+        # Gestion alternative de la soumission (compatibilité)
         if submitted and "user_text" in st.session_state:
-            # Cette condition permet de gérer le cas où on_click n'est pas supporté
             if not st.session_state.get("submitted_text"):
                 st.session_state["submitted_text"] = st.session_state["user_text"]
                 st.toast("AI response ready", icon="✅")
@@ -81,30 +91,35 @@ def main() -> None:
     # Contenu de chaque onglet
     for name, tab in zip(TABS, pages):
         with tab:
-            st.write(f"Contenu de l'onglet {name}")
+            if name == "Lettre":
+                # Formulaire de génération de lettre dans l'onglet Lettre
+                with st.form("lettre_formulaire"):
+                    st.subheader("📄 Générer une lettre")
+                    destinataire = st.text_input("Destinataire")
+                    objet = st.text_input("Objet")
+                    corps = st.text_area("Contenu (Markdown ou texte libre)")
+                    submitted = st.form_submit_button("Générer")
+                    
+                    if submitted:
+                        path = generate_letter(destinataire, objet, corps)
+                        st.success("Lettre générée.")
+                        with open(path, "rb") as f:
+                            st.download_button(
+                                "📥 Télécharger la lettre", 
+                                f, 
+                                file_name="lettre.docx"
+                            )
+            else:
+                st.write(f"Contenu de l'onglet {name}")
     
     # Command palette si disponible
     if hasattr(st, "command_palette"):
         st.command_palette({"placeholder": lambda: None})
     
-    # Formulaire de génération de lettre
-    with st.form("lettre_formulaire"):
-        st.subheader("📄 Générer une lettre")
-        destinataire = st.text_input("Destinataire")
-        objet = st.text_input("Objet")
-        corps = st.text_area("Contenu (Markdown ou texte libre)")
-        submitted = st.form_submit_button("Générer")
-        
-        if submitted:
-            path = generate_letter(destinataire, objet, corps)
-            st.success("Lettre générée.")
-            with open(path, "rb") as f:
-                st.download_button("📥 Télécharger la lettre", f, file_name="lettre.docx")
-    
     # Affichage du PDF dans la sidebar si disponible
     pdf_file = Path("sample.pdf")
     if pdf_file.exists():
-        # Format multi-lignes pour une meilleure lisibilité (style version 1)
+        # Format multi-lignes pour une meilleure lisibilité
         pdf_html = (
             f'<iframe src="{pdf_file.as_posix()}#page=1" '
             'width="350" height="600"></iframe>'

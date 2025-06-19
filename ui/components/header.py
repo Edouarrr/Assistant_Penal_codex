@@ -9,15 +9,30 @@ def render_header(use_columns: bool = True, style: str = "default") -> str:
     Args:
         use_columns: Si True, utilise st.columns pour la mise en page (par défaut).
                     Si False, génère tout en HTML pur.
-        style: Style du header ("default", "flexbox", ou "compact")
+        style: Style du header ("default", "flexbox", "compact", ou "gap")
     
     Returns:
         str: Le code HTML du header généré.
     """
     logo_path = Path("static/logo-steru.svg")
     
-    if style == "flexbox":
-        # Style de la version 1 avec proportions flex
+    if style == "compact" or style == "gap":
+        # Style compact de la version codex avec gap
+        if logo_path.exists():
+            logo_html = f"<img src='{logo_path.as_posix()}' style='height:50px'>"
+        else:
+            logo_html = ":grey_question:"
+        
+        html = (
+            "<header><div style='display:flex;align-items:center;gap:1rem;'>"
+            f"{logo_html}<h1 style='margin-bottom:0'>Cabinet Steru</h1>"
+            "</div><hr/></header>"
+        )
+        st.markdown(html, unsafe_allow_html=True)
+        return html
+    
+    elif style == "flexbox":
+        # Style avec proportions flex
         if logo_path.exists():
             logo_html = f"<img src='{logo_path.as_posix()}' style='width:100%'>"
         else:
@@ -38,7 +53,7 @@ def render_header(use_columns: bool = True, style: str = "default") -> str:
         return html
     
     elif use_columns:
-        # Approche avec colonnes Streamlit
+        # Approche avec colonnes Streamlit (par défaut)
         cols = st.columns([1, 8])
         html_parts = ["<header style='display:flex;align-items:center'>"]
         
@@ -102,3 +117,8 @@ def render_header_simple() -> None:
 def render_header_legacy() -> str:
     """Version legacy du header (compatible avec version 1)."""
     return render_header(use_columns=False, style="flexbox")
+
+
+def render_header_compact() -> str:
+    """Version compacte du header avec gap (style codex)."""
+    return render_header(use_columns=False, style="compact")

@@ -21,6 +21,7 @@ class VectorJuridique:
     """Vectorisation juridique avancée pour documents pénaux."""
 
     def __init__(self, settings_path: str = "config/vector_settings.yaml") -> None:
+        self.base_dir = Path(__file__).resolve().parent.parent
         self.settings = self._load_settings(settings_path)
         self._configure_logging(self.settings.get("log_path"))
         openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -34,7 +35,11 @@ class VectorJuridique:
             chunk_overlap=self.settings.get("chunk_overlap", 100),
         )
 
-        self.client = PersistentClient(path=self.settings.get("persist_directory", "chroma_db"))
+        persist_dir = Path(self.settings.get("persist_directory", "chroma_db"))
+        if not persist_dir.is_absolute():
+            persist_dir = self.base_dir / persist_dir
+        persist_dir.mkdir(parents=True, exist_ok=True)
+        self.client = PersistentClient(path=str(persist_dir))
         self.collection = self.client.get_or_create_collection(
             "legal_vectors",
             embedding_function=embedding_functions.OpenAIEmbeddingFunction(
@@ -49,13 +54,13 @@ class VectorJuridique:
             data = yaml.safe_load(f)
         return data.get("vectorization", {})
 
-    @staticmethod
-    def _configure_logging(log_path: str) -> None:
-        log_dir = os.path.dirname(log_path)
-        if log_dir and not os.path.exists(log_dir):
-            os.makedirs(log_dir, exist_ok=True)
+    def _configure_logging(self, log_path: str) -> None:
+        log_file = Path(log_path)
+        if not log_file.is_absolute():
+            log_file = self.base_dir / log_file
+        log_file.parent.mkdir(parents=True, exist_ok=True)
         logging.basicConfig(
-            filename=log_path,
+            filename=str(log_file),
             level=logging.ERROR,
             format="%(asctime)s %(levelname)s:%(message)s",
         )
