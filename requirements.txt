@@ -1,6 +1,10 @@
+
 streamlit
 pydantic
 chromadb
 openai
 pytesseract
+pdf2image
 pillow
+pyyaml
+streamlit
