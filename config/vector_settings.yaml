@@ -3,6 +3,6 @@ vectorization:
   chunk_size: 800
   chunk_overlap: 100
   hierarchy_levels: 2
-  persist_directory: "/chroma_db"
+  persist_directory: "chroma_db/"
   metadata_fields: ["file_name", "page_number", "summary_lvl1", "summary_lvl2"]
-  log_path: "/logs/vectorization_errors.log"
+  log_path: "logs/vectorization_errors.log"
