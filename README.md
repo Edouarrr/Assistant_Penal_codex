@@ -50,3 +50,22 @@ On Railway you can schedule this with a cron job:
   command: "python -m core.ocr_sharepoint_sync"
 ```
 
+## Scheduled jobs
+
+Railway can run several maintenance scripts on a schedule. Below is an example
+configuration illustrating the three main cron jobs used by the project:
+
+```yaml
+- name: "Vectorisation OCR"
+  schedule: "0 3 * * *"
+  command: "python ocr_vector_sync.py"
+
+- name: "Veille juridique AI"
+  schedule: "30 4 * * *"
+  command: "python veille_juridique_ai.py"
+
+- name: "Backup ChromaDB"
+  schedule: "0 5 * * *"
+  command: "python backup_chroma.py"
+```
+
