@@ -12,16 +12,21 @@ Assistant Penal Codex is an experimental workflow for digitizing legal documents
 ## Directory layout
 
 ```
-├── data/
-│   ├── raw/          # original scanned files
-│   └── processed/    # text extracted from OCR
-├── src/
-│   ├── ocr/          # OCR routines
-│   ├── vector/       # embedding and ChromaDB code
-│   ├── query/        # LLM querying utilities
-│   └── generate/     # document generation scripts
-├── docs/             # generated reports
-└── Dockerfile        # container setup for Railway
+├── chroma_db/           # local ChromaDB embeddings
+├── config/              # YAML configs and prompts
+├── core/                # core processing modules
+├── logs/                # runtime logs
+├── ocr_output/          # text extracted from OCR
+├── raw_documents/       # source scanned files
+├── src/                 # helper utilities
+├── static/              # static assets for the web app
+├── summaries/           # generated summaries
+├── templates/           # document templates
+├── tests/               # unit tests
+├── ui/                  # Streamlit UI components
+├── ocr_sharepoint_sync.py  # SharePoint sync helper
+├── streamlit_app.py     # main web application
+└── requirements.txt     # Python dependencies
 ```
 
 ## Environment variables
