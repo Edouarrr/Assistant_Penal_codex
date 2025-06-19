@@ -36,7 +36,8 @@ These variables should be set in your environment or in Railway's configuration 
 
 ## OCR SharePoint synchronization
 
-To sync the OCR output with SharePoint, run:
+The synchronization logic lives in ``core/ocr_sharepoint_sync.py``. To sync the
+OCR output with SharePoint, run:
 
 ```bash
 python -m core.ocr_sharepoint_sync
