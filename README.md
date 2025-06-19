@@ -123,3 +123,27 @@ The following steps show how to process documents from OCR to vector embeddings.
 
    This reads PDFs from `ocr_output/`, stores embeddings in ChromaDB and writes
    page summaries to `summaries/`.
+
+## Scheduled jobs
+
+Railway can run several maintenance scripts on a schedule. Below is an example
+configuration illustrating the three main cron jobs used by the project:
+
+```yaml
+- name: "Vectorisation OCR"
+  schedule: "0 3 * * *"
+  command: "python ocr_vector_sync.py"
+
+- name: "Veille juridique AI"
+  schedule: "30 4 * * *"
+  command: "python veille_juridique_ai.py"
+
+- name: "Backup ChromaDB"
+  schedule: "0 5 * * *"
+  command: "python backup_chroma.py"
+```
+
+These jobs run automatically to maintain the system:
+- **Vectorisation OCR** (3:00 AM): Processes new OCR text into vector embeddings
+- **Veille juridique AI** (4:30 AM): Performs automated legal monitoring
+- **Backup ChromaDB** (5:00 AM): Creates backups of the vector database
