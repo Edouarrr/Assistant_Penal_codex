@@ -1,0 +1,5 @@
+# Default settings for visualization modules
+colors:
+  timeline: "#0a84ff"
+  mindmap_nodes: "#232F34"
+  dashboard: "#1c1c1c"
