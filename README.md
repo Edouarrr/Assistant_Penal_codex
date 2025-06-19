@@ -12,19 +12,21 @@ Assistant Penal Codex is an experimental workflow for digitizing legal documents
 ## Directory layout
 
 ```
-├── chroma_db/          # local ChromaDB storage
-├── config/             # configuration and prompt files
-├── core/               # core modules and sync helpers
-├── logs/               # runtime logs
-├── ocr_output/         # OCR results
-├── raw_documents/      # source PDFs and images
-├── src/                # shared utilities
-├── static/             # static assets
-├── streamlit_app.py    # Streamlit interface
-├── summaries/          # generated summaries
-├── templates/          # document templates
-├── tests/              # test suite
-└── ui/                 # Streamlit components
+├── chroma_db/           # local ChromaDB embeddings storage
+├── config/              # YAML configs and prompt files
+├── core/                # core processing modules and sync helpers
+├── logs/                # runtime logs
+├── ocr_output/          # text extracted from OCR
+├── raw_documents/       # source scanned files and PDFs
+├── src/                 # shared helper utilities
+├── static/              # static assets for the web app
+├── summaries/           # generated summaries
+├── templates/           # document templates
+├── tests/               # unit tests suite
+├── ui/                  # Streamlit UI components
+├── ocr_sharepoint_sync.py  # SharePoint sync helper (legacy)
+├── streamlit_app.py     # main web application interface
+└── requirements.txt     # Python dependencies
 ```
 
 ## Environment variables
@@ -121,4 +123,3 @@ The following steps show how to process documents from OCR to vector embeddings.
 
    This reads PDFs from `ocr_output/`, stores embeddings in ChromaDB and writes
    page summaries to `summaries/`.
-
