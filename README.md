@@ -3,6 +3,7 @@
 Assistant Penal Codex is an experimental workflow for digitizing legal documents and making them queryable with modern language models. The project focuses on:
 
 - **Optical Character Recognition (OCR)** of scanned codebooks and PDFs.
+- **SharePoint synchronization** via Microsoft Graph with automatic OCR.
 - **Vectorizing text** using OpenAI embeddings stored in **ChromaDB** for retrieval.
 - **Querying multiple LLMs** to obtain answers from the vector store.
 - **Generating documents** from query results to streamline research.
