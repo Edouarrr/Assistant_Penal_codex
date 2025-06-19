@@ -12,16 +12,19 @@ Assistant Penal Codex is an experimental workflow for digitizing legal documents
 ## Directory layout
 
 ```
-├── data/
-│   ├── raw/          # original scanned files
-│   └── processed/    # text extracted from OCR
-├── src/
-│   ├── ocr/          # OCR routines
-│   ├── vector/       # embedding and ChromaDB code
-│   ├── query/        # LLM querying utilities
-│   └── generate/     # document generation scripts
-├── docs/             # generated reports
-└── Dockerfile        # container setup for Railway
+├── chroma_db/          # local ChromaDB storage
+├── config/             # configuration and prompt files
+├── core/               # core modules and sync helpers
+├── logs/               # runtime logs
+├── ocr_output/         # OCR results
+├── raw_documents/      # source PDFs and images
+├── src/                # shared utilities
+├── static/             # static assets
+├── streamlit_app.py    # Streamlit interface
+├── summaries/          # generated summaries
+├── templates/          # document templates
+├── tests/              # test suite
+└── ui/                 # Streamlit components
 ```
 
 ## Environment variables
@@ -49,7 +52,8 @@ Other useful variables:
 
 ## OCR SharePoint synchronization
 
-To sync the OCR output with SharePoint, run:
+The synchronization logic lives in ``core/ocr_sharepoint_sync.py``. To sync the
+OCR output with SharePoint, run:
 
 ```bash
 python -m core.ocr_sharepoint_sync
