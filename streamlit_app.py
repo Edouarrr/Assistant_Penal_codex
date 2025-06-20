@@ -4,33 +4,31 @@ Assistant Pénal - Interface principale du cabinet STERU BARATTE AARPI
 import streamlit as st
 import os
 
-# === Healthcheck serveur pour Railway ===
-import threading
-import http.server
-import socketserver
+# === Healthcheck intégré à Streamlit pour Railway ===
+import streamlit.web.server as st_server
+from streamlit.runtime.scriptrunner import get_script_run_ctx
+from streamlit.runtime.runtime import Runtime
+from streamlit.runtime.runtime_local import RuntimeLocal
+from streamlit.runtime.app_session import AppSession
+from streamlit.runtime.runtime_util import get_session_id
+from streamlit.web.server import Server
 
-class HealthHandler(http.server.BaseHTTPRequestHandler):
-    def do_GET(self):
-        if self.path == "/healthz":
-            self.send_response(200)
-            self.send_header("Content-type", "application/json")
-            self.end_headers()
-            self.wfile.write(b'{"status": "ok"}')
-        else:
-            self.send_response(404)
-            self.end_headers()
-    
-    def log_message(self, format, *args):
-        # Désactiver les logs pour éviter le spam
-        pass
+# Inject a route into Streamlit's Tornado server
+from tornado.web import RequestHandler
+from streamlit.web.server import create_app
 
-def run_health_server():
-    with socketserver.TCPServer(("", 8081), HealthHandler) as httpd:
-        print("✅ Health check server running on port 8081")
-        httpd.serve_forever()
+class HealthzHandler(RequestHandler):
+    def get(self):
+        self.set_status(200)
+        self.set_header("Content-Type", "application/json")
+        self.finish('{"status":"ok"}')
 
-# Lancer le serveur de health check
-threading.Thread(target=run_health_server, daemon=True).start()
+def inject_healthz_route():
+    app = create_app()
+    app.add_handlers(r".*", [(r"/healthz", HealthzHandler)])
+    print("✅ Health check route /healthz injected into Streamlit server")
+
+inject_healthz_route()
 
 from pathlib import Path
 from datetime import datetime
