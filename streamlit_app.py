@@ -2,38 +2,39 @@
 Assistant Pénal - Interface principale du cabinet STERU BARATTE AARPI
 """
 import streamlit as st
+import os
 
-# Health check server pour Railway
-if st.secrets.get("RAILWAY_ENVIRONMENT"):
-    import http.server
-    import socketserver
-    import threading
+# === Healthcheck serveur pour Railway ===
+import threading
+import http.server
+import socketserver
+
+class HealthHandler(http.server.BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == "/healthz":
+            self.send_response(200)
+            self.send_header("Content-type", "application/json")
+            self.end_headers()
+            self.wfile.write(b'{"status": "ok"}')
+        else:
+            self.send_response(404)
+            self.end_headers()
     
-    class HealthHandler(http.server.BaseHTTPRequestHandler):
-        def do_GET(self):
-            if self.path == "/healthz":
-                self.send_response(200)
-                self.send_header("Content-type", "application/json")
-                self.end_headers()
-                self.wfile.write(b'{"status":"ok"}')
-            else:
-                self.send_error(404)
-        
-        def log_message(self, format, *args):
-            # Désactiver les logs pour éviter le spam
-            pass
-    
-    def run_health_server():
-        with socketserver.TCPServer(("", 8080), HealthHandler) as httpd:
-            print("✅ Health check server running on port 8080")
-            httpd.serve_forever()
-    
-    # Lancer le serveur de health check en arrière-plan
+    def log_message(self, format, *args):
+        # Désactiver les logs pour éviter le spam
+        pass
+
+def run_health_server():
+    with socketserver.TCPServer(("", 8081), HealthHandler) as httpd:
+        print("✅ Health check server running on port 8081")
+        httpd.serve_forever()
+
+# Lancer le serveur de health check uniquement sur Railway
+if os.getenv("RAILWAY_ENVIRONMENT"):
     threading.Thread(target=run_health_server, daemon=True).start()
 
 from pathlib import Path
 from datetime import datetime
-import os
 import json
 import sys
 
