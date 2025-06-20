@@ -29,9 +29,8 @@ def run_health_server():
         print("✅ Health check server running on port 8081")
         httpd.serve_forever()
 
-# Lancer le serveur de health check uniquement sur Railway
-if os.getenv("RAILWAY_ENVIRONMENT"):
-    threading.Thread(target=run_health_server, daemon=True).start()
+# Lancer le serveur de health check
+threading.Thread(target=run_health_server, daemon=True).start()
 
 from pathlib import Path
 from datetime import datetime
