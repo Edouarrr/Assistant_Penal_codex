@@ -2,21 +2,34 @@
 Assistant Pénal - Interface principale du cabinet STERU BARATTE AARPI
 """
 import streamlit as st
-from flask import Flask, jsonify
-from threading import Thread
 
-# Init un micro-serveur Flask pour le health check
-health_app = Flask("health")
-
-@health_app.route("/healthz")
-def healthz():
-    return jsonify(status="ok"), 200
-
-def run_health():
-    health_app.run(host="0.0.0.0", port=8081)
-
-# Lance le health server sur un thread séparé
-Thread(target=run_health, daemon=True).start()
+# Health check server pour Railway
+if st.secrets.get("RAILWAY_ENVIRONMENT"):
+    import http.server
+    import socketserver
+    import threading
+    
+    class HealthHandler(http.server.BaseHTTPRequestHandler):
+        def do_GET(self):
+            if self.path == "/healthz":
+                self.send_response(200)
+                self.send_header("Content-type", "application/json")
+                self.end_headers()
+                self.wfile.write(b'{"status":"ok"}')
+            else:
+                self.send_error(404)
+        
+        def log_message(self, format, *args):
+            # Désactiver les logs pour éviter le spam
+            pass
+    
+    def run_health_server():
+        with socketserver.TCPServer(("", 8080), HealthHandler) as httpd:
+            print("✅ Health check server running on port 8080")
+            httpd.serve_forever()
+    
+    # Lancer le serveur de health check en arrière-plan
+    threading.Thread(target=run_health_server, daemon=True).start()
 
 from pathlib import Path
 from datetime import datetime
@@ -1534,4 +1547,6 @@ def main():
         unsafe_allow_html=True
     )
 
-main()
+
+if __name__ == "__main__":
+    main()
