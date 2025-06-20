@@ -1,34 +1,11 @@
 {
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
-    "builder": "DOCKERFILE",
-    "dockerfilePath": "Dockerfile",
-    "buildCommand": null,
-    "watchPatterns": [
-      "**/*.py",
-      "requirements.txt",
-      "Dockerfile"
-    ]
+    "builder": "NIXPACKS"
   },
   "deploy": {
-    "runtime": "V2",
-    "numReplicas": 1,
-    "startCommand": "streamlit run app.py --server.port=$PORT --server.address=0.0.0.0",
-    "healthcheckPath": "/",
-    "healthcheckTimeout": 300,
+    "startCommand": "python run.py",
     "restartPolicyType": "ON_FAILURE",
-    "restartPolicyMaxRetries": 3,
-    "region": "eu-west-1"
-  },
-  "envVars": {
-    "PYTHONUNBUFFERED": {
-      "value": "1"
-    },
-    "PORT": {
-      "value": "8501"
-    },
-    "CHROMA_PERSIST_DIRECTORY": {
-      "value": "/app/data/vector_db"
-    }
+    "restartPolicyMaxRetries": 10
   }
 }
